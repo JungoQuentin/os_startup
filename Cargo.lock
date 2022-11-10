@@ -179,6 +179,7 @@ dependencies = [
  "inquire",
  "question",
  "sudo",
+ "whoami",
 ]
 
 [[package]]
@@ -339,6 +340,15 @@ name = "unicode-width"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
+
+[[package]]
+name = "whoami"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a6101ab2f3773c007669bc598b0c23e43e010f997ee81fbc9523310ad852c931"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "winapi"

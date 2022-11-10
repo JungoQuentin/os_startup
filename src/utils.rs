@@ -61,10 +61,7 @@ pub fn bonus_inst(distro: &Distro, software: &str) {
 }
 
 pub fn manual_install(distro: &Distro) -> bool {
-    if matches!(
-        Question::new("Do you want to type an other software to install ?").confirm(),
-        Answer::NO
-    ) {
+    if Question::new("Do you want to type an other software to install ?").confirm() == Answer::NO {
         return false;
     }
     let software = Question::new("type the name of the distro")
@@ -92,6 +89,8 @@ pub fn print_res(cmd: &std::process::Output, success_msg: &str) {
             format!("L'erreur suivante est survenue :").bold().red(),
             std::str::from_utf8(&cmd.stderr).expect("")
         );
-        exit(1);
+        if Question::new("Do you want to continue ?").confirm() == Answer::NO {
+            exit(1);
+        }
     }
 }
