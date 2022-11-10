@@ -1,7 +1,15 @@
 //use inquire::{MultiSelect, Select, Text};
-use inquire::Select;
 use crate::{Distro, InstallationType};
+use inquire::Select;
 use std::process::Command;
+
+pub fn get_sudo() {
+    let _cmd = Command::new("sudo")
+        .arg("/usr/bin/id")
+        .status()
+        .unwrap()
+        .success();
+}
 
 pub fn get_installation_type(distro: &Distro) -> InstallationType {
     return Select::new(

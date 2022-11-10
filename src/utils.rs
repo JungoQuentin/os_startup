@@ -1,5 +1,6 @@
 use crate::Distro;
 use colored::Colorize;
+use question::{Answer, Question};
 use std::iter;
 use std::process::{self, exit, Command};
 
@@ -36,22 +37,54 @@ pub fn print_welcome() {
 }
 
 pub fn inst(distro: &Distro, software: &str) -> process::ExitStatus {
-    let cmd = Command::new(match distro {
-        Distro::Arch => "pacman",
-        Distro::Debian => "apt-get",
-    })
-    .arg(match distro {
-        Distro::Arch => "-Sy",
-        Distro::Debian => "install",
-    })
-    .arg(software)
-    .output()
-    .expect("A problem occur when...");
+    let cmd = Command::new("sudo")
+        .args(match distro {
+            Distro::Arch => ["pacman", "-Sy", "--noconfirm", ""],
+            Distro::Debian => ["DEBIAN_FRONTEND=noninteractive", "apt-get", "install", "-y"],
+        })
+        .arg(software)
+        .output()
+        .expect("A problem occur when...");
+    // enlever ??
+    println!("{}", std::str::from_utf8(&cmd.stdout).expect(""));
+    print_res(&cmd, format!("{software} installed !").as_str());
+    return cmd.status;
+}
+
+pub fn bonus_inst(distro: &Distro, software: &str) {
+    match Question::new(format!("Do you want to install {software} ?").as_str()).confirm() {
+        Answer::YES => {
+            inst(&distro, software);
+        }
+        _ => {}
+    }
+}
+
+pub fn manual_install(distro: &Distro) -> bool {
+    if matches!(
+        Question::new("Do you want to type an other software to install ?").confirm(),
+        Answer::NO
+    ) {
+        return false;
+    }
+    let software = Question::new("type the name of the distro")
+        .ask()
+        .expect("fallait juste donner un nom..");
+
+    let software = match software {
+        Answer::RESPONSE(r) => r,
+        _ => "r".to_string(),
+    };
+    inst(distro, &software);
+    true
+}
+
+pub fn print_res(cmd: &std::process::Output, success_msg: &str) {
     if cmd.status.success() {
         println!(
             "{}{}\n",
             std::str::from_utf8(&cmd.stdout).expect(""),
-            format!("{software} installed !").bold().green(),
+            format!("{success_msg}").bold().green(),
         );
     } else {
         println!(
@@ -61,6 +94,4 @@ pub fn inst(distro: &Distro, software: &str) -> process::ExitStatus {
         );
         exit(1);
     }
-    // TODO enlever le return ??
-    return cmd.status;
 }
