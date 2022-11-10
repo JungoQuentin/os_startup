@@ -39,8 +39,8 @@ pub fn print_welcome() {
 pub fn inst(distro: &Distro, software: &str) -> process::ExitStatus {
     let cmd = Command::new("sudo")
         .args(match distro {
-            Distro::Arch => ["pacman", "-Sy", "--noconfirm", ""],
-            Distro::Debian => ["DEBIAN_FRONTEND=noninteractive", "apt-get", "install", "-y"],
+            Distro::Arch => vec!["pacman", "-Sy", "--noconfirm"],
+            Distro::Debian => vec!["DEBIAN_FRONTEND=noninteractive", "apt-get", "install", "-y"],
         })
         .arg(software)
         .output()
