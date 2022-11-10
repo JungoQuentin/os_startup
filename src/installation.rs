@@ -12,9 +12,7 @@ pub fn default_installation(distro: Distro) {
     inst(&distro, "nodejs");
     inst_nvim(&info);
     inst_zsh(&distro);
-    if !inst(&distro, "gh").success() {
-        inst(&distro, "github-cli");
-    }
+    inst(&distro, "github-cli");
     if distro == Distro::Debian {
         inst(&distro, "clangd-11");
     } else {
@@ -24,7 +22,7 @@ pub fn default_installation(distro: Distro) {
     inst(&distro, "make");
 
     // Bonus
-    bonus_inst(&distro, "godot3");
+    bonus_inst(&distro, "godot");
     bonus_inst(&distro, "gimp");
     while manual_install(&distro) {}
     folders();
@@ -34,6 +32,7 @@ pub fn folders() {
     if Question::new("Do you want the populate the classics' folders ??").confirm() == Answer::NO {
         return;
     }
+    // TODO ca ne marche pas vraiment..
     let home: String = format!("/home/{}/", whoami::username());
     let _cmd = Command::new("rmdir")
         .arg(format!("{home}/*"))
