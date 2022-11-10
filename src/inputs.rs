@@ -21,16 +21,15 @@ pub fn get_installation_type(distro: &Distro) -> InstallationType {
 }
 
 pub fn get_distro() -> Option<Distro> {
-    let pacman = Command::new("sh")
-        .arg("pacman -v")
+    let pacman = Command::new("pacman")
+        .arg("-h")
         .output()
         .expect("A problem occur when...");
     if !std::str::from_utf8(&pacman.stdout).expect("").is_empty() {
         return Some(Distro::Arch);
     }
-    let pacman = Command::new("sh")
-        .arg("-c")
-        .arg("apt -v")
+    let pacman = Command::new("apt")
+        .arg("-v")
         .output()
         .expect("A problem occur when...");
     if !std::str::from_utf8(&pacman.stdout).expect("").is_empty() {
