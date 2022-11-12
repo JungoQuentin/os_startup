@@ -10,6 +10,7 @@ pub fn default_installation(distro: Distro) {
     };
     inst_git(&distro);
     inst(&distro, "nodejs");
+    inst(&distro, "npm");
     inst_nvim(&info);
     inst_zsh(&distro);
     inst(&distro, "github-cli");
@@ -20,7 +21,6 @@ pub fn default_installation(distro: Distro) {
     }
     inst(&distro, "curl");
     inst(&distro, "make");
-
     // Bonus
     bonus_inst(&distro, "godot");
     bonus_inst(&distro, "gimp");
@@ -28,6 +28,7 @@ pub fn default_installation(distro: Distro) {
     folders();
 }
 
+//pub fn inst_dashlane_cli() {}
 pub fn folders() {
     if Question::new("Do you want the populate the classics' folders ??").confirm() == Answer::NO {
         return;
