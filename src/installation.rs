@@ -8,12 +8,12 @@ pub fn default_installation(distro: Distro) {
         distro: &distro,
         username: String::new(),
     };
-    inst_rust();
-    return ;
-
     inst_git(&distro);
     inst(&distro, "nodejs");
     inst(&distro, "npm");
+    if (distro == Distro::Arch) {
+        inst(&distro, "gnome-keyring");
+    }
     inst_nvim(&info);
     inst_zsh(&distro);
     inst(&distro, "github-cli");
@@ -29,6 +29,7 @@ pub fn default_installation(distro: Distro) {
     bonus_inst(&distro, "gimp");
     while manual_install(&distro) {}
     folders();
+    inst_rust();
 }
 
 //pub fn inst_dashlane_cli() {}
