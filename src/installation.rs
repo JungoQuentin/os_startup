@@ -1,13 +1,16 @@
 use crate::utils::{bonus_inst, inst, manual_install, print_res};
 use crate::{Distro, Infos};
 use question::{Answer, Question};
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 pub fn default_installation(distro: Distro) {
     let info = Infos {
         distro: &distro,
         username: String::new(),
     };
+    inst_rust();
+    return ;
+
     inst_git(&distro);
     inst(&distro, "nodejs");
     inst(&distro, "npm");
@@ -51,19 +54,19 @@ pub fn custom_installation(distro: Distro) {
     todo!("custom to finish !!! {:?}", distro);
 }
 
-// TODO un peu chaud de faire des pipes pour l'instant
-// Ca va rester sur du shell
-/*
+
 fn inst_rust() {
-    let cmd = Command::new("sudo")
-        .arg("curl")
-        .args(["--proto", "'=https'"])
-        .args(["--tlsv1.2", "-sSf", "https://sh.rustup.rs", "|", "sh"])
+    let get_rustup_sh = Command::new("curl")
+        .args(["https://sh.rustup.rs"])
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("Rust Install fail");
+    let cmd = Command::new("sh")
+        .stdin(Stdio::from(get_rustup_sh.stdout.unwrap()))
         .output()
         .expect("Rust Install fail");
     print_res(&cmd, "Rust installed !");
 }
-*/
 
 fn inst_nvim(infos: &Infos) {
     if infos.distro == &Distro::Debian {
@@ -118,14 +121,18 @@ fn inst_nvim(infos: &Infos) {
 
 fn inst_zsh(distro: &Distro) {
     inst(distro, "zsh");
-    // TODO : zsh en main
+    let _cmd = Command::new("chsh")
+        .args(["-s", "usr/bin/zsh"])
+        .output()
+        .expect("Ne veut pas set zsh comme main shell");
 }
+
 fn inst_git(distro: &Distro) {
     inst(distro, "git");
     let _cmd = Command::new("git")
         .args(["config", "--global", "user.name", "Quentin", "Jungo"])
         .output()
-        .expect("Il ne veut pas git clone packer");
+        .expect("Ne veut pas git config");
     let _cmd = Command::new("git")
         .args([
             "config",
